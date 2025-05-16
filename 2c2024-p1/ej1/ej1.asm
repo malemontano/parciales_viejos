@@ -59,11 +59,61 @@ es_indice_ordenado:
 	; ubicación según la convención de llamada. Prestá atención a qué
 	; valores son de 64 bits y qué valores son de 32 bits o 8 bits.
 	;
-	; r/m64 = item_t**     inventario
-	; r/m64 = uint16_t*    indice
-	; r/m16 = uint16_t     tamanio
-	; r/m64 = comparador_t comparador
+	; rdi = item_t**     inventario
+	; rsi = uint16_t*    indice
+	; rdx(16bits mas bajos) = uint16_t     tamanio
+	; rcx = comparador_t comparador
+
+	push rbp
+	mov rbp, rsp
+	push r12
+	push r13
+	push r14
+	push r15;alineada
+
+	mov r12, rdi;puntero a inventario
+	mov r13, rsi;puntero a indice
+	movzx r14, dx;extiendo a 64bits el tamaño
+	mov r15, rcx;puntero a la funcion comparadora?
+
+	.ciclo:
+	mov r8, [r13];arreglo indice. indice[i]
+	mov r9, [r13+2];indice[i+1](son de 16bits asi q me muevo 2 bytes para acceder al sig elem)
+	mov rdi, [r12+r8];inventario[indice[i]]
+	mov rsi, [r12+r9];inventario[indice[i+1]]
+	call r15
+	cmp rax, 0;chequeo si dio false
+	je .no_esta_bien_ordenado
+	;esta bien ordenado hasta el momento, avanzo
+	dec r14
+	cmp r14, 0
+	mov rax, 1;llegue hasta el final sin encontrar una comp erronea, devuelvo true
+	je .fin 
+	add r13, 2;avanzo el puntero de indice
+	add r12, 8;avanzo el puntero de inventario
+	jmp .ciclo
+
+	.no_esta_bien_ordenado
+	mov rax, 0
+	
+	.fin:
+
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rbp
 		ret
+
+
+
+
+
+
+
+
+
+
 
 ;; Dado un inventario y una vista, crear un nuevo inventario que mantenga el
 ;; orden descrito por la misma.

@@ -163,6 +163,14 @@ void test_ej1a(void) {
 		printf(SKIP "El ejercicio 1A no está hecho aún.\n");
 		return;
 	}
+	// CASO DE PRUEBA MINIMAL PARA DEBUG
+	//item_t* inventario[] = {
+	//	I(Espada, 1, 4), //(Nombre, fuerza, durabilidad)
+	//	I(Hacha, 2, 8),
+	//	NULL
+	//};
+	// caso esperado: ordenado por fuerza descendente
+	//test_es_indice_ordenado(true, inventario, (uint16_t[]) {1, 0}, COMPARAR_POR_FUERZA);
 
 	item_t* inventario[] = {
 		I(Espada que espadea, 10, 5),
